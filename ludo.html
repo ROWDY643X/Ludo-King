@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Ludo</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #222;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      margin: 20px 0;
+    }
+
+    .board {
+      width: 94vw;
+      max-width: 500px;
+      height: 94vw;
+      max-height: 500px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      grid-template-rows: repeat(15, 1fr);
+      border: 5px solid #111;
+      background: white;
+    }
+
+    .cell {
+      border: 1px solid #aaa;
+    }
+
+    .red {
+      background: #e53935;
+    }
+
+    .green {
+      background: #43a047;
+    }
+
+    .yellow {
+      background: #fbc02d;
+    }
+
+    .blue {
+      background: #1e88e5;
+    }
+
+    .center {
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+    }
+
+    .dice {
+      margin: 25px auto;
+      font-size: 50px;
+    }
+
+    button {
+      padding: 15px 35px;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🎲 Custom Ludo</h1>
+
+<div class="board">
+
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell red"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+  <div class="cell green"></div>
+
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell center">🏠</div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell center">🏆</div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell center">🏠</div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell blue"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+  <div class="cell yellow"></div>
+
+</div>
+
+<div class="dice">🎲</div>
+
+<button onclick="rollDice()">ROLL DICE</button>
+
+<script>
+function rollDice() {
+  const number = Math.floor(Math.random() * 6) + 1;
+  document.querySelector(".dice").textContent = "🎲 " + number;
+}
+</script>
+
+</body>
+    </html>
