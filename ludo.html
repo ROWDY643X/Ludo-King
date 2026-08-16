@@ -1,186 +1,349 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Ludo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custom Ludo</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #222;
-      text-align: center;
-      color: white;
-    }
+<style>
+*{box-sizing:border-box}
 
-    h1 {
-      margin: 20px 0;
-    }
+body{
+  margin:0;
+  background:#202020;
+  font-family:Arial,sans-serif;
+  color:#fff;
+  text-align:center;
+}
 
-    .board {
-      width: 94vw;
-      max-width: 500px;
-      height: 94vw;
-      max-height: 500px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(15, 1fr);
-      grid-template-rows: repeat(15, 1fr);
-      border: 5px solid #111;
-      background: white;
-    }
+h1{margin:16px 0 6px;font-size:30px}
 
-    .cell {
-      border: 1px solid #aaa;
-    }
+#selected{
+  margin:5px auto 12px;
+  font-weight:bold;
+}
 
-    .red {
-      background: #e53935;
-    }
+.board{
+  width:min(94vw,560px);
+  aspect-ratio:1;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(15,1fr);
+  grid-template-rows:repeat(15,1fr);
+  background:#fff;
+  border:5px solid #111;
+  box-shadow:0 4px 15px #000;
+}
 
-    .green {
-      background: #43a047;
-    }
+.cell{
+  border:1px solid #aaa;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .yellow {
-      background: #fbc02d;
-    }
+.home{
+  border:2px solid #222;
+}
 
-    .blue {
-      background: #1e88e5;
-    }
+.redHome{grid-area:1/1/7/7;background:#e53935}
+.greenHome{grid-area:1/10/7/16;background:#43a047}
+.blueHome{grid-area:10/1/16/7;background:#1e88e5}
+.yellowHome{grid-area:10/10/16/16;background:#fbc02d}
 
-    .center {
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 35px;
-    }
+.homeBox{
+  width:72%;
+  height:72%;
+  background:#fff;
+  border-radius:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:8px;
+  padding:10px;
+}
 
-    .dice {
-      margin: 25px auto;
-      font-size: 50px;
-    }
+.base{
+  border-radius:50%;
+  border:3px solid #333;
+}
 
-    button {
-      padding: 15px 35px;
-      border: none;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-  </style>
+.redBase{background:#e53935}
+.greenBase{background:#43a047}
+.blueBase{background:#1e88e5}
+.yellowBase{background:#fbc02d}
+
+.path{background:#fff}
+.redPath{background:#ffcdd2}
+.greenPath{background:#c8e6c9}
+.bluePath{background:#bbdefb}
+.yellowPath{background:#fff9c4}
+
+.safe:after{
+  content:"★";
+  color:#777;
+  font-size:13px;
+}
+
+.center{
+  background:conic-gradient(
+    #43a047 0 25%,
+    #fbc02d 25% 50%,
+    #1e88e5 50% 75%,
+    #e53935 75% 100%
+  );
+}
+
+.token{
+  width:75%;
+  aspect-ratio:1;
+  border-radius:50%;
+  border:3px solid #fff;
+  box-shadow:0 2px 5px #555;
+  z-index:5;
+}
+
+.redToken{background:#e53935}
+.greenToken{background:#43a047}
+.blueToken{background:#1e88e5}
+.yellowToken{background:#fbc02d}
+
+.controls{
+  padding:15px;
+}
+
+#dice{
+  font-size:55px;
+  margin:5px;
+}
+
+#number{
+  font-size:30px;
+  font-weight:bold;
+}
+
+button{
+  border:0;
+  border-radius:14px;
+  padding:15px 35px;
+  font-size:20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#status{
+  margin:12px;
+  min-height:25px;
+}
+</style>
 </head>
 
 <body>
 
 <h1>🎲 Custom Ludo</h1>
 
-<div class="board">
+<div id="selected">Loading selected colour...</div>
 
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
+<div class="board" id="board"></div>
 
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
-
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell red"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
-  <div class="cell green"></div>
-
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell center">🏠</div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell center">🏆</div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell center">🏠</div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell blue"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-  <div class="cell yellow"></div>
-
+<div class="controls">
+  <div id="dice">🎲</div>
+  <div id="number">—</div>
+  <br>
+  <button onclick="rollDice()">ROLL DICE</button>
+  <div id="status"></div>
 </div>
 
-<div class="dice">🎲</div>
-
-<button onclick="rollDice()">ROLL DICE</button>
-
 <script>
-function rollDice() {
-  const number = Math.floor(Math.random() * 6) + 1;
-  document.querySelector(".dice").textContent = "🎲 " + number;
+const board=document.getElementById("board");
+
+const selectedColour=
+  localStorage.getItem("selectedColour") || "RED";
+
+document.getElementById("selected").textContent=
+  "Selected colour: "+selectedColour;
+
+/*
+  Build a 15 × 15 board.
+  The four 6 × 6 corners are the player homes.
+*/
+
+function home(row,col,cls){
+  const d=document.createElement("div");
+  d.className="home "+cls;
+  d.style.gridRow=row;
+  d.style.gridColumn=col;
+
+  const box=document.createElement("div");
+  box.className="homeBox";
+
+  const colour=cls.replace("Home","").toLowerCase();
+
+  for(let i=0;i<4;i++){
+    const b=document.createElement("div");
+    b.className="base "+colour+"Base";
+
+    const token=document.createElement("div");
+    token.className="token "+colour+"Token";
+    token.dataset.colour=colour.toUpperCase();
+    token.dataset.index=i;
+
+    b.appendChild(token);
+    box.appendChild(b);
+  }
+
+  d.appendChild(box);
+  board.appendChild(d);
 }
+
+home("1 / 7","1 / 7","redHome");
+home("1 / 7","10 / 16","greenHome");
+home("10 / 16","1 / 7","blueHome");
+home("10 / 16","10 / 16","yellowHome");
+
+/* Create central playable area */
+
+const occupied=[];
+
+function key(r,c){return r+","+c}
+
+function addCell(r,c,cls="path"){
+  const d=document.createElement("div");
+  d.className="cell "+cls;
+  d.style.gridRow=r;
+  d.style.gridColumn=c;
+  board.appendChild(d);
+  occupied.push(key(r,c));
+}
+
+/* Main cross */
+
+for(let r=1;r<=15;r++){
+  for(let c=1;c<=15;c++){
+
+    if(
+      (r<=6 && c<=6) ||
+      (r<=6 && c>=10) ||
+      (r>=10 && c<=6) ||
+      (r>=10 && c>=10)
+    ) continue;
+
+    let cls="path";
+
+    if(c===8 && r>=2 && r<=6) cls+=" redPath";
+    if(r===8 && c>=2 && c<=6) cls+=" bluePath";
+    if(c===8 && r>=10 && r<=14) cls+=" yellowPath";
+    if(r===8 && c>=10 && c<=14) cls+=" greenPath";
+
+    if(
+      (r===8 && c===2) ||
+      (r===2 && c===8) ||
+      (r===8 && c===14) ||
+      (r===14 && c===8)
+    ) cls+=" safe";
+
+    if(r>=7 && r<=9 && c>=7 && c<=9){
+      cls="cell center";
+    }
+
+    addCell(r,c,cls);
+  }
+}
+
+/* Add extra coloured home paths */
+
+const homePaths=[
+  ["red",7,8],
+  ["red",6,8],
+  ["red",5,8],
+  ["red",4,8],
+  ["red",3,8],
+
+  ["green",8,9],
+  ["green",8,10],
+  ["green",8,11],
+  ["green",8,12],
+  ["green",8,13],
+
+  ["yellow",9,8],
+  ["yellow",10,8],
+  ["yellow",11,8],
+  ["yellow",12,8],
+  ["yellow",13,8],
+
+  ["blue",8,7],
+  ["blue",8,6],
+  ["blue",8,5],
+  ["blue",8,4],
+  ["blue",8,3]
+];
+
+for(const [colour,r,c] of homePaths){
+  const d=document.createElement("div");
+  d.className="cell "+colour+"Path";
+  d.style.gridRow=r;
+  d.style.gridColumn=c;
+  d.textContent=" ";
+  board.appendChild(d);
+}
+
+/* Dice */
+
+let currentPlayer="RED";
+let diceValue=0;
+
+const players=["RED","GREEN","YELLOW","BLUE"];
+
+function rollDice(){
+
+  diceValue=Math.floor(Math.random()*6)+1;
+
+  const faces=["","⚀","⚁","⚂","⚃","⚄","⚅"];
+
+  document.getElementById("dice").textContent=faces[diceValue];
+  document.getElementById("number").textContent=diceValue;
+
+  document.getElementById("status").textContent=
+    currentPlayer+" rolled "+diceValue;
+
+  /*
+    This is your custom game.
+    The selected colour is treated as the priority colour.
+  */
+
+  if(currentPlayer===selectedColour){
+    document.getElementById("status").textContent=
+      selectedColour+" rolled "+diceValue+" — your custom turn!";
+  }
+
+  currentPlayer=
+    players[(players.indexOf(currentPlayer)+1)%4];
+}
+
+/* Make tokens clickable */
+
+document.querySelectorAll(".token").forEach(token=>{
+  token.addEventListener("click",()=>{
+    const colour=token.dataset.colour;
+
+    if(colour!==selectedColour){
+      document.getElementById("status").textContent=
+        "Select a "+selectedColour+" token.";
+      return;
+    }
+
+    if(diceValue===0){
+      document.getElementById("status").textContent=
+        "Roll the dice first.";
+      return;
+    }
+
+    document.getElementById("status").textContent=
+      colour+" token selected — "+diceValue+" spaces.";
+  });
+});
 </script>
 
 </body>
-    </html>
+</html>
