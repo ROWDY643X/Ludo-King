@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Ludo - Select Colour</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 30px 15px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #ccc;
+    }
+
+    button {
+      display: block;
+      width: 90%;
+      max-width: 350px;
+      margin: 18px auto;
+      padding: 20px;
+      border: none;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .red { background: #e53935; }
+    .green { background: #43a047; }
+    .yellow { background: #fbc02d; color: #111; }
+    .blue { background: #1e88e5; }
+
+    #result {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎲 Custom Ludo</h1>
+  <p>Select your colour</p>
+
+  <button class="red" onclick="selectColour('RED')">
+    🔴 RED
+  </button>
+
+  <button class="green" onclick="selectColour('GREEN')">
+    🟢 GREEN
+  </button>
+
+  <button class="yellow" onclick="selectColour('YELLOW')">
+    🟡 YELLOW
+  </button>
+
+  <button class="blue" onclick="selectColour('BLUE')">
+    🔵 BLUE
+  </button>
+
+  <div id="result"></div>
+
+  <script>
+    function selectColour(colour) {
+      localStorage.setItem("selectedColour", colour);
+
+      document.getElementById("result").innerHTML =
+        "✅ Selected colour: " + colour;
+    }
+  </script>
+
+</body>
+</html>
