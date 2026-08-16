@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Custom Ludo</title>
 
@@ -11,79 +10,138 @@
 body{
   margin:0;
   background:#202020;
+  color:white;
   font-family:Arial,sans-serif;
   text-align:center;
-  color:white;
 }
 
-h1{margin:12px 0 5px}
+h1{margin:12px 0 4px}
 
-#info{
-  margin:5px;
-  font-size:17px;
+#turn{
+  font-size:18px;
+  margin:6px;
+}
+
+#message{
+  min-height:25px;
+  margin:6px;
+  font-weight:bold;
 }
 
 .board{
-  width:min(94vw,520px);
+  position:relative;
+  width:94vw;
+  max-width:520px;
   aspect-ratio:1;
-  margin:12px auto;
-  display:grid;
-  grid-template-columns:repeat(15,1fr);
-  grid-template-rows:repeat(15,1fr);
+  margin:10px auto;
   background:white;
   border:5px solid #111;
+  overflow:hidden;
+}
+
+/* Four home areas */
+
+.home{
+  position:absolute;
+  width:40%;
+  height:40%;
+  padding:8%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:10px;
+}
+
+.redHome{
+  left:0;
+  top:0;
+  background:#e53935;
+}
+
+.greenHome{
+  right:0;
+  top:0;
+  background:#43a047;
+}
+
+.blueHome{
+  left:0;
+  bottom:0;
+  background:#1e88e5;
+}
+
+.yellowHome{
+  right:0;
+  bottom:0;
+  background:#fbc02d;
+}
+
+.base{
+  background:white;
+  border-radius:50%;
+  border:3px solid #333;
   position:relative;
 }
 
-.cell{
-  border:1px solid #aaa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+/* Playing track */
+
+.track{
+  position:absolute;
+  left:20%;
+  top:20%;
+  width:60%;
+  height:60%;
+  background:#eee;
+  border:2px solid #222;
 }
 
-.redHome{background:#e53935}
-.greenHome{background:#43a047}
-.yellowHome{background:#fbc02d}
-.blueHome{background:#1e88e5}
-
-.path{background:white}
-
-.redPath{background:#ffcdd2}
-.greenPath{background:#c8e6c9}
-.yellowPath{background:#fff9c4}
-.bluePath{background:#bbdefb}
+/* Centre */
 
 .center{
-  background:linear-gradient(
-    45deg,
+  position:absolute;
+  left:40%;
+  top:40%;
+  width:20%;
+  height:20%;
+  background:conic-gradient(
     #e53935 0 25%,
     #43a047 25% 50%,
     #fbc02d 50% 75%,
-    #1e88e5 75%
+    #1e88e5 75% 100%
   );
+  border:2px solid #222;
+}
+
+/* Track cells */
+
+.cell{
+  position:absolute;
+  width:6%;
+  height:6%;
+  background:white;
+  border:1px solid #999;
+}
+
+.safe{
+  background:#fff4b0;
 }
 
 .token{
-  width:72%;
-  height:72%;
+  position:absolute;
+  width:6%;
+  height:6%;
   border-radius:50%;
   border:3px solid white;
-  box-shadow:0 2px 4px #555;
+  box-shadow:0 2px 5px #555;
+  z-index:20;
   cursor:pointer;
-  z-index:10;
+  transform:translate(-50%,-50%);
 }
 
 .red{background:#e53935}
 .green{background:#43a047}
-.yellow{background:#fbc02d}
 .blue{background:#1e88e5}
-
-#dice{
-  font-size:55px;
-  height:65px;
-}
+.yellow{background:#fbc02d}
 
 button{
   border:0;
@@ -93,9 +151,13 @@ button{
   font-weight:bold;
 }
 
-#message{
-  min-height:25px;
-  margin:10px;
+#dice{
+  font-size:52px;
+  height:60px;
+}
+
+#number{
+  font-size:20px;
   font-weight:bold;
 }
 </style>
@@ -105,307 +167,319 @@ button{
 
 <h1>🎲 Custom Ludo</h1>
 
-<div id="info"></div>
+<div id="turn"></div>
+<div id="message">Roll the dice.</div>
 
-<div class="board" id="board"></div>
+<div class="board" id="board">
+
+  <div class="home redHome">
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+  </div>
+
+  <div class="home greenHome">
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+  </div>
+
+  <div class="home blueHome">
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+  </div>
+
+  <div class="home yellowHome">
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+    <div class="base"></div>
+  </div>
+
+  <div class="track"></div>
+  <div class="center"></div>
+
+</div>
 
 <div id="dice">🎲</div>
+<div id="number"></div>
 
 <button id="roll">ROLL DICE</button>
-
-<div id="message">Roll the dice to start.</div>
 
 <script>
 
 /* =========================
-   GAME SETTINGS
+   PLAYERS
 ========================= */
 
-const colours=["RED","GREEN","YELLOW","BLUE"];
+const players=[
+  "RED",
+  "GREEN",
+  "YELLOW",
+  "BLUE"
+];
 
-const css={
- RED:"red",
- GREEN:"green",
- YELLOW:"yellow",
- BLUE:"blue"
-};
-
-let selectedColour=
-  localStorage.getItem("selectedColour") || "RED";
-
-let currentPlayer=0;
+let playerTurn=0;
 let dice=0;
-let rolled=false;
-
-const pieces={
- RED:[-1,-1,-1,-1],
- GREEN:[-1,-1,-1,-1],
- YELLOW:[-1,-1,-1,-1],
- BLUE:[-1,-1,-1,-1]
-};
-
+let waitingForToken=false;
 let winner=null;
 
 
 /* =========================
-   BOARD TRACK
+   TOKENS
 ========================= */
 
-const track=[];
+const tokens={
+  RED:[-1,-1,-1,-1],
+  GREEN:[-1,-1,-1,-1],
+  YELLOW:[-1,-1,-1,-1],
+  BLUE:[-1,-1,-1,-1]
+};
 
-for(let c=1;c<=15;c++) track.push([8,c]);
-for(let r=9;r<=15;r++) track.push([r,15]);
-for(let c=14;c>=1;c--) track.push([15,c]);
-for(let r=14;r>=1;r--) track.push([r,1]);
 
 /*
-This gives us a simple circular track.
-The home paths are handled separately.
+-1 = inside home
+0-51 = position on track
+52 = finished
 */
 
 
 /* =========================
-   CREATE BOARD
+   52 TRACK POSITIONS
 ========================= */
 
-const board=document.getElementById("board");
+const path=[];
 
-function makeCell(r,c,className="cell"){
+/* Top */
 
-  const d=document.createElement("div");
+for(let x=23;x<=77;x+=6){
+  path.push([x,23]);
+}
 
-  d.className=className;
+/* Right */
 
-  d.style.gridRow=r;
-  d.style.gridColumn=c;
+for(let y=29;y<=77;y+=6){
+  path.push([77,y]);
+}
 
-  board.appendChild(d);
+/* Bottom */
 
-  return d;
+for(let x=71;x>=23;x-=6){
+  path.push([x,77]);
+}
+
+/* Left */
+
+for(let y=71;y>=29;y-=6){
+  path.push([23,y]);
 }
 
 
-/* Four home areas */
+/*
+Complete remaining positions around
+the middle.
+*/
 
-for(let r=1;r<=15;r++){
+while(path.length<52){
 
-  for(let c=1;c<=15;c++){
+  const n=path.length;
 
-    let home=false;
+  const angle=(Math.PI*2*n)/52;
 
-    if(r<=6 && c<=6) home=true;
-    if(r<=6 && c>=10) home=true;
-    if(r>=10 && c<=6) home=true;
-    if(r>=10 && c>=10) home=true;
+  const x=50+27*Math.cos(angle);
+  const y=50+27*Math.sin(angle);
 
-    if(home){
-
-      let cls="cell ";
-
-      if(r<=6 && c<=6) cls+="redHome";
-      else if(r<=6 && c>=10) cls+="greenHome";
-      else if(r>=10 && c<=6) cls+="blueHome";
-      else cls+="yellowHome";
-
-      makeCell(r,c,cls);
-
-    }else{
-
-      makeCell(r,c,"cell path");
-
-    }
-
-  }
+  path.push([x,y]);
 }
-
-
-/* Colour the main lanes */
-
-for(let i=0;i<track.length;i++){
-
-  const [r,c]=track[i];
-
-  const cells=document.querySelectorAll(".cell");
-
-  const index=(r-1)*15+(c-1);
-
-  if(cells[index]){
-    cells[index].classList.add(
-      css[colours[i%4]]+"Path"
-    );
-  }
-}
-
-
-/* Center */
-
-const center=document.createElement("div");
-
-center.className="center";
-
-center.style.gridRow="7 / 10";
-center.style.gridColumn="7 / 10";
-
-board.appendChild(center);
 
 
 /* =========================
-   TOKEN DISPLAY
+   HOME POSITIONS
+========================= */
+
+const homePositions={
+
+  RED:[
+    [10,10],
+    [17,10],
+    [10,17],
+    [17,17]
+  ],
+
+  GREEN:[
+    [83,10],
+    [90,10],
+    [83,17],
+    [90,17]
+  ],
+
+  BLUE:[
+    [10,83],
+    [17,83],
+    [10,90],
+    [17,90]
+  ],
+
+  YELLOW:[
+    [83,83],
+    [90,83],
+    [83,90],
+    [90,90]
+  ]
+
+};
+
+
+/* =========================
+   START POSITIONS
+========================= */
+
+const starts={
+  RED:0,
+  GREEN:13,
+  YELLOW:26,
+  BLUE:39
+};
+
+
+/* =========================
+   DRAW TOKENS
 ========================= */
 
 function drawTokens(){
 
-  document.querySelectorAll(".token").forEach(t=>t.remove());
+  document
+    .querySelectorAll(".token")
+    .forEach(t=>t.remove());
 
-  colours.forEach(colour=>{
+  players.forEach(colour=>{
 
     for(let i=0;i<4;i++){
 
-      const position=pieces[colour][i];
+      const position=tokens[colour][i];
 
-      let cell;
+      let x,y;
 
       if(position===-1){
 
-        /*
-        Token is still inside its home area.
-        */
+        [x,y]=homePositions[colour][i];
 
-        const homePositions={
-          RED:[[2,2],[2,5],[5,2],[5,5]],
-          GREEN:[[2,11],[2,14],[5,11],[5,14]],
-          BLUE:[[11,2],[11,5],[14,2],[14,5]],
-          YELLOW:[[11,11],[11,14],[14,11],[14,14]]
-        };
+      }else if(position>=52){
 
-        const [r,c]=homePositions[colour][i];
-
-        cell=document.querySelector(
-          `.cell:nth-child(${(r-1)*15+c})`
-        );
+        [x,y]=[50,50];
 
       }else{
 
-        const [r,c]=track[
-          (startIndex[colour]+position)%track.length
-        ];
+        const index=
+          (starts[colour]+position)%52;
 
-        cell=document.querySelector(
-          `.cell:nth-child(${(r-1)*15+c})`
+        [x,y]=path[index];
+
+      }
+
+      const token=document.createElement("div");
+
+      token.className=
+        "token "+colour.toLowerCase();
+
+      token.style.left=x+"%";
+      token.style.top=y+"%";
+
+      token.dataset.colour=colour;
+      token.dataset.index=i;
+
+      token.onclick=function(){
+
+        chooseToken(
+          colour,
+          Number(this.dataset.index)
         );
 
-      }
+      };
 
-      if(cell){
-
-        const token=document.createElement("div");
-
-        token.className="token "+css[colour];
-
-        token.dataset.colour=colour;
-        token.dataset.index=i;
-
-        token.onclick=()=>{
-          moveToken(colour,i);
-        };
-
-        cell.appendChild(token);
-
-      }
+      document
+        .getElementById("board")
+        .appendChild(token);
 
     }
 
   });
 
-}
-
-
-/* Starting positions */
-
-const startIndex={
- RED:0,
- GREEN:10,
- YELLOW:20,
- BLUE:30
-};
-
-
-/* =========================
-   PLAYER INFO
-========================= */
-
-function updateInfo(){
-
-  const player=colours[currentPlayer];
-
-  document.getElementById("info").textContent=
-    "Turn: "+player+
-    " | Selected: "+selectedColour;
+  document.getElementById("turn").textContent=
+    "Turn: "+players[playerTurn];
 
 }
 
-updateInfo();
-drawTokens();
-
 
 /* =========================
-   DICE
+   ROLL DICE
 ========================= */
 
-document.getElementById("roll").onclick=()=>{
+document.getElementById("roll").onclick=function(){
 
-  if(winner) return;
+  if(winner){
+    return;
+  }
 
-  if(rolled){
+  if(waitingForToken){
 
     document.getElementById("message").textContent=
-      "Choose a "+colours[currentPlayer]+" token.";
+      "Tap one of your tokens.";
 
     return;
 
   }
 
-  dice=Math.floor(Math.random()*6)+1;
+  dice=
+    Math.floor(Math.random()*6)+1;
 
   document.getElementById("dice").textContent=
     ["","⚀","⚁","⚂","⚃","⚄","⚅"][dice];
 
-  rolled=true;
+  document.getElementById("number").textContent=
+    "You rolled: "+dice;
+
+  waitingForToken=true;
 
   document.getElementById("message").textContent=
-    colours[currentPlayer]+
-    " rolled "+dice+
-    ". Choose a token.";
+    "Tap a "+players[playerTurn]+" token.";
 
 };
 
 
 /* =========================
-   MOVE TOKEN
+   CHOOSE TOKEN
 ========================= */
 
-function moveToken(colour,index){
+function chooseToken(colour,index){
 
-  if(winner) return;
+  if(winner){
+    return;
+  }
 
-  if(!rolled) return;
+  if(!waitingForToken){
+    return;
+  }
 
-  if(colour!==colours[currentPlayer]){
+  if(colour!==players[playerTurn]){
 
     document.getElementById("message").textContent=
-      "It's "+colours[currentPlayer]+"'s turn.";
+      "It's "+players[playerTurn]+"'s turn.";
 
     return;
 
   }
 
-  const position=pieces[colour][index];
+  const current=tokens[colour][index];
 
-  /*
-  Need a 6 to leave home.
-  */
 
-  if(position===-1){
+  /* Token inside home */
+
+  if(current===-1){
 
     if(dice!==6){
 
@@ -416,13 +490,17 @@ function moveToken(colour,index){
 
     }
 
-    pieces[colour][index]=0;
+    tokens[colour][index]=0;
 
-  }else{
+  }
 
-    const newPosition=position+dice;
+  /* Token already moving */
 
-    if(newPosition>track.length){
+  else{
+
+    const next=current+dice;
+
+    if(next>52){
 
       document.getElementById("message").textContent=
         "That token cannot move that far.";
@@ -431,40 +509,71 @@ function moveToken(colour,index){
 
     }
 
-    pieces[colour][index]=newPosition;
+    tokens[colour][index]=next;
 
   }
 
-  rolled=false;
+
+  /* Finish */
+
+  if(tokens[colour][index]>=52){
+
+    tokens[colour][index]=52;
+
+  }
+
+
+  /* Capture */
 
   capture(colour,index);
 
+
+  waitingForToken=false;
+
   drawTokens();
 
-  checkWinner(colour);
 
-  if(winner) return;
+  /* Check winner */
 
-  /*
-  A 6 gives another turn.
-  */
+  if(
+    tokens[colour].every(
+      position=>position===52
+    )
+  ){
+
+    winner=colour;
+
+    document.getElementById("message").textContent=
+      "🏆 "+colour+" WINS!";
+
+    document.getElementById("roll").disabled=true;
+
+    return;
+
+  }
+
+
+  /* Extra turn on 6 */
 
   if(dice===6){
 
     document.getElementById("message").textContent=
-      colour+" gets another turn!";
+      colour+" gets another turn! Roll again.";
 
-  }else{
-
-    currentPlayer=
-      (currentPlayer+1)%colours.length;
-
-    updateInfo();
-
-    document.getElementById("message").textContent=
-      "Now it's "+colours[currentPlayer]+"'s turn.";
+    return;
 
   }
+
+
+  /* Next player */
+
+  playerTurn=
+    (playerTurn+1)%players.length;
+
+  document.getElementById("message").textContent=
+    "Now it's "+players[playerTurn]+"'s turn.";
+
+  drawTokens();
 
 }
 
@@ -475,29 +584,42 @@ function moveToken(colour,index){
 
 function capture(colour,index){
 
-  const pos=pieces[colour][index];
+  const position=tokens[colour][index];
 
-  if(pos<0) return;
+  if(position<0 || position>=52){
+    return;
+  }
 
   const absolute=
-    (startIndex[colour]+pos)%track.length;
+    (starts[colour]+position)%52;
 
-  colours.forEach(other=>{
+  players.forEach(other=>{
 
-    if(other===colour) return;
+    if(other===colour){
+      return;
+    }
 
     for(let i=0;i<4;i++){
 
-      const otherPos=pieces[other][i];
+      const otherPosition=tokens[other][i];
 
-      if(otherPos<0) continue;
+      if(
+        otherPosition>=0 &&
+        otherPosition<52
+      ){
 
-      const otherAbsolute=
-        (startIndex[other]+otherPos)%track.length;
+        const otherAbsolute=
+          (starts[other]+otherPosition)%52;
 
-      if(otherAbsolute===absolute){
+        if(otherAbsolute===absolute){
 
-        pieces[other][i]=-1;
+          /*
+          Send captured token back home.
+          */
+
+          tokens[other][i]=-1;
+
+        }
 
       }
 
@@ -509,33 +631,10 @@ function capture(colour,index){
 
 
 /* =========================
-   WINNER
+   START GAME
 ========================= */
 
-function checkWinner(colour){
-
-  /*
-  Simple custom win condition:
-  all four tokens must have completed the track.
-  */
-
-  const allHome=
-    pieces[colour].every(
-      p=>p>=track.length
-    );
-
-  if(allHome){
-
-    winner=colour;
-
-    document.getElementById("message").textContent=
-      "🏆 "+colour+" WINS!";
-
-    document.getElementById("roll").disabled=true;
-
-  }
-
-}
+drawTokens();
 
 </script>
 
